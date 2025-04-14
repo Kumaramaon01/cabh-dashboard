@@ -6,3 +6,4 @@ plotly
 mysql-connector-python
 sqlalchemy
 schedule
+python-dotenv==1.0.0
