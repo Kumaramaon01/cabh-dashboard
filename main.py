@@ -623,6 +623,31 @@ if st.session_state.script_choice == "data":
     # Convert Streamlit date input to string format for SQL query
     start_date = start_date.strftime('%Y-%m-%d')
     end_date = end_date.strftime('%Y-%m-%d')
+
+    from monitor_data_range.device_data_analysis import calculate_data_metrics
+    installation_date, expected, actual, percent = calculate_data_metrics(input_device_ID)
+
+    if installation_date:
+        st.markdown("### 📊 Data Availability Analysis")
+        
+        # Display in 2 columns
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("**🛠️ Installation Date:**")
+            st.write(installation_date.strftime('%Y-%m-%d %H:%M:%S'))
+
+            st.markdown("**📈 Expected Data Points:**")
+            st.write(f"{expected:,}")  # comma-separated
+
+        with col2:
+            st.markdown("**📉 Actual Data Points:**")
+            st.write(f"{actual:,}")  # comma-separated
+
+            st.markdown("**✅ Data Collection %:**")
+            st.write(f"{percent:.2f}%")
+    else:
+        st.warning("⚠️ Please enter a valid **Device ID** to view records.")
     
     # Validate inputs and execute on button click
     if st.button('Fetch Data'):
