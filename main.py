@@ -648,7 +648,7 @@ if st.session_state.script_choice == "data":
             st.write(f"{percent:.2f}%")
     else:
         st.warning("⚠️ Please enter a valid **Device ID** to view records.")
-    
+
     # Validate inputs and execute on button click
     if st.button('Fetch Data'):
         connection = mysql.connector.connect(
