@@ -1,3 +1,4 @@
+
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
@@ -71,7 +72,7 @@ st.markdown("""
 if 'script_choice' not in st.session_state:
     st.session_state.script_choice = "people"  # Set default to "about"
 
-col1, col2, col3, col4, col5 = st.columns(5)
+col1, col2, col3, col4, col5, col6 = st.columns(6)
 with col1:
     if st.button('People EDS'):
         st.session_state.script_choice = "people"
@@ -87,7 +88,9 @@ with col4:
 with col5:
     if st.button('Monthly Trends'):
         st.session_state.script_choice = "monthly_trends"
-
+with col6:
+    if st.button('Device Comparison'):
+        st.session_state.script_choice = 'device_data_comparison'
 # Set the default selected date to one day before the current date
 default_date = datetime.now() - timedelta(days=1)
 #Based on the user selection, display appropriate input fields and run the script
@@ -2068,7 +2071,159 @@ if st.session_state.script_choice == "monthly_trends":
                         conn.close()
 
 
-st.markdown('<hr style="border:1px solid black">', unsafe_allow_html=True)
+    st.markdown('<hr style="border:1px solid black">', unsafe_allow_html=True)
+
+elif st.session_state.script_choice == 'device_data_comparison':
+    st.header('Device Data Comparison')
+    st.write("This section will allow you to compare data between different devices.")
+    
+    # Define device data dictionary with device IDs and their information
+    device_data = {
+        '1203240077': ('Gurneet Mannat Room', 'Residential'),
+        '1203240076': ('Gurneet Prabhash Room', 'Residential'),
+        '1201240079': ('Piyush Bedroom', 'Residential'),
+        '1201240085': ('Piyush Living Room', 'Residential'),
+        '1203240083': ('Sheetal Living Room', 'Residential'),
+        '1201240072': ('Lakshmi Living Room', 'Residential'),
+        '1201240077': ('Lakshmi Kitchen', 'Residential'),
+        '1202240027': ('Mariyam Bedroom 1', 'Residential'),
+        '1202240011': ('Mariyam Living Room', 'Residential'),
+        '1201240074': ('Abhishek Living Room', 'Residential'),
+        '1203240080': ('Abhishek Bedroom', 'Residential'),
+        '1212230160': ('Surender Bedroom', 'Residential'),
+        '1201240076': ('Surender Living Room', 'Residential'),
+        '1202240009': ('Robin Bedroom', 'Residential'),
+        '1202240008': ('Robin Living Room', 'Residential'),
+        '1201240075': ('Hines Office 1', 'Office'),
+        '1201240078': ('Hines Office 2', 'Office'),
+        '1202240025': ('EDS D Block 1', 'Office'),
+        '1202240026': ('EDS D Block 2', 'Office'),
+        '1203240073': ('Nidhi Bedroom', 'Residential'),
+        '1203240072': ('Manpreet Drawing', 'Residential')
+    }
+    
+    # Create reverse mapping from location to device ID
+    location_to_device = {info[0]: device_id for device_id, info in device_data.items()}
+    
+    # Get list of locations
+    locations = sorted(location_to_device.keys())
+    
+    # Create columns for device selection
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        location_1 = st.selectbox("Select First Location:", options=locations, index=0, key='location_1')
+        device_id_1 = location_to_device[location_1]
+        st.write(f"Device ID: {device_id_1}")
+        st.write(f"Type: {device_data[device_id_1][1]}")
+    
+    with col2:
+        location_2 = st.selectbox("Select Second Location:", options=locations, index=0, key='location_2')
+        device_id_2 = location_to_device[location_2]
+        st.write(f"Device ID: {device_id_2}")
+        st.write(f"Type: {device_data[device_id_2][1]}")
+    
+    with col3:
+        location_3 = st.selectbox("Select Third Location:", options=locations, index=0, key='location_3')
+        device_id_3 = location_to_device[location_3]
+        st.write(f"Device ID: {device_id_3}")
+        st.write(f"Type: {device_data[device_id_3][1]}")
+    
+    # Add date range selection
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        start_date = st.date_input("Start Date", value=datetime(2024, 4, 1))
+    with col2:
+        end_date = st.date_input("End Date", value=datetime(2024, 4, 30))
+
+    with col3:
+        pollutant = st.selectbox("Select Pollutant:", ["PM2.5", "PM10", "AQI", "CO2", "VOC", "Temperature", "Humidity"], key='pollutant')
+    
+    st.markdown('<hr style="border:1px solid black">', unsafe_allow_html=True)
+
+    # Map display names to database column names
+    pollutant_map = {
+        "PM2.5": "pm25",
+        "PM10": "pm10",
+        "AQI": "aqi",
+        "CO2": "co2",
+        "VOC": "voc",
+        "Temperature": "temp",
+        "Humidity": "humidity"
+    }
+    host = "139.59.34.149"
+    user = "neemdb"
+    password = "(#&pxJ&p7JvhA7<B"
+    database = "cabh_iaq_db"
+    # Button to generate comparison
+    if st.button("Generate Charts"):
+        with st.spinner("Generating comparison...please wait"):
+            try:
+                # Connect to the MySQL database
+                conn = mysql.connector.connect(
+                    host=host,
+                    user=user,
+                    password=password,
+                    database=database
+                )
+                cursor = conn.cursor()
+                
+                # Create a figure for the comparison
+                fig = go.Figure()
+                
+                # Fetch and plot data for each device
+                for device_id, color in [(device_id_1, 'blue'), (device_id_2, 'red'), (device_id_3, 'green')]:
+                    # Query to fetch data for the selected date range
+                    query = """
+                    SELECT datetime, {}
+                    FROM reading_db
+                    WHERE deviceID = %s 
+                    AND DATE(datetime) BETWEEN %s AND %s;
+                    """.format(pollutant_map[pollutant])
+                    
+                    cursor.execute(query, (device_id, start_date, end_date))
+                    rows = cursor.fetchall()
+                    
+                    if rows:
+                        # Process data
+                        df = pd.DataFrame(rows, columns=["datetime", pollutant_map[pollutant]])
+                        df['datetime'] = pd.to_datetime(df['datetime'])
+                        df.set_index('datetime', inplace=True)
+                        
+                        # Remove zeros and resample to hourly averages
+                        df = df[df[pollutant_map[pollutant]] != 0]
+                        df = df.resample('H').mean()
+                        
+                        # Add trace to the figure
+                        fig.add_trace(go.Scatter(
+                            x=df.index,
+                            y=df[pollutant_map[pollutant]],
+                            name=f"{device_data[device_id][0]}",
+                            line=dict(color=color)
+                        ))
+                
+                # Update layout
+                fig.update_layout(
+                    title=f"{pollutant} Comparison",
+                    xaxis_title="Time",
+                    yaxis_title=pollutant,
+                    height=600
+                )
+                
+                # Display the plot
+                st.plotly_chart(fig, use_container_width=True)
+                
+            except mysql.connector.Error as e:
+                st.error(f"Database error: {e}")
+            except Exception as e:
+                st.error(f"An unexpected error occurred: {e}")
+            finally:
+                if 'conn' in locals() and conn.is_connected():
+                    cursor.close()
+                    conn.close()
+    
+    st.markdown('<hr style="border:1px solid black">', unsafe_allow_html=True)
+
 st.markdown(
     """
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
