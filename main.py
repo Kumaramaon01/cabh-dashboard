@@ -1425,37 +1425,37 @@ if st.session_state.script_choice == "monthly_trends":
 
     # Device Data Dictionary (deviceID, address, typology)
     device_data = {
-        "1201240075": ("Hines Office, 12th Floor, One Horizon Centre, Sec-43, Gurugram", "Office"),
-        "1201240078": ("Hines Office, 12th Floor, One Horizon Centre, Sec-43, Gurugram", "Office"),
-        "1202240026": ("D-1/25 Vasant Vihar, New Delhi-110057(EDS Delhi)", "Office"),
-        "1202240025": ("D-1/25 Vasant Vihar, New Delhi-110057(EDS Delhi)", "Office"),
-        "1203240081": ("26A Poorvi Marg, Vasant Vihar, New Delhi-110057 (EDS, E-Block, Delhi)", "Office"),
-        "1202240011": ("D-188, Abul Fazal Enclave-I, Jamia Nagar, New Delhi-110025", "Apartment"),
-        "1202240027": ("D-188, Abul Fazal Enclave-I, Jamia Nagar, New Delhi-110025", "Apartment"),
-        "1203240076": ("D 184 ABUL FAZAL ENCLAVE, JAMIA NAGAR, OKHLA, NEW DELHI 25", "Midrise Apartment (G+5)"),
-        "1203240078": ("D 184 ABUL FAZAL ENCLAVE, JAMIA NAGAR, OKHLA, NEW DELHI 25", "Midrise Apartment (G+5)"),
-        "1203240075": ("A 48/B, Third Floor, Abul Fazal Enclave Part II, New Delhi", "Residential"),
-        "1201240077": ("448, Sector-9, Pocket-1 DDA Flats Dwarka, New Delhi-110075", "Residential"),
-        "1201240072": ("448, Sector-9, Pocket-1 DDA Flats Dwarka, New Delhi-110075", "Residential"),
-        "1203240079": ("C-403, Prince Apartments, Plot 54, I.P. Extension, Patparganj, Delhi - 110092", "Residential, Multi-family"),
-        "1201240079": ("B-3/527, Ekta Gardens Apts, Patparganj, Delhi - 110092", "Residential"),
-        "1201240085": ("B-3/527, Ekta Gardens Apts, Patparganj, Delhi - 110092", "Residential"),
-        "1203240083": ("Flat No. 25, Tower E2, Sector E1, Vasant Kunj, New Delhi", "Residential"),
-        "1203240073": ("Flat no. 495, Block 14, Kaveri Apartments, D6, Vasant Kunj, Delhi - 110070", "Residential"),
-        "1203240074": ("569 sector A pocket C Vasant Kunj, Delhi - 110070", "Residential"),
-        "1201240076": ("H No.-296 Near Durga Ashram, Chhatarpur, Delhi-110074", "Residential"),
-        "1212230160": ("H No.-296 Near Durga Ashram, Chhatarpur, Delhi-110074", "Residential"),
-        "1202240009": ("D-13A 2nd Floor Left side, Paryavaran Complex, Delhi 1100030", "Office"),
-        "1202240008": ("D-13A 2nd Floor Left side, Paryavaran Complex, Delhi 1100030", "Office"),
-        "1201240073": ("569 sector A pocket C Vasant Kunj, Delhi - 110070", "Residential"),
-        "1203240080": ("F-5, 318-N, Chirag Delhi, Delhi-110017", "Residential"),
-        "1201240074": ("F-5, 318-N, Chirag Delhi, Delhi-110017", "Residential"),
-        "1203240077": ("B-2/51-A, Keshav Puram", "Apartment"),
-        "1203240082": ("B-2/51-A, Keshav Puram", "Apartment"),
-        "1202240029": ("St. Mary's School, Dwarka Sec-19", "Office"),
-        "1202240028": ("St. Mary's School, Dwarka Sec-19", "Office"),
-        "1202240010": ("St. Mary's School, Dwarka Sec-19", "Office"),
-        "1202240012": ("St. Mary's School, Dwarka Sec-19", "School"),
+        "1201240075": ("Hines Office, 12th Floor, One Horizon Centre, Sec-43, Gurugram", "Office","Hines Office 1"),
+        "1201240078": ("Hines Office, 12th Floor, One Horizon Centre, Sec-43, Gurugram", "Office","Hines Office 2"),
+        "1202240026": ("D-1/25 Vasant Vihar, New Delhi-110057(EDS Delhi)", "Office","EDS D Block "),
+        "1202240025": ("D-1/25 Vasant Vihar, New Delhi-110057(EDS Delhi)", "Office","EDS D Block "),
+        "1203240081": ("26A Poorvi Marg, Vasant Vihar, New Delhi-110057 (EDS, E-Block, Delhi)", "Office","EDS E Block"),
+        "1202240011": ("D-188, Abul Fazal Enclave-I, Jamia Nagar, New Delhi-110025", "Apartment","Mariyam Living Room"),
+        "1202240027": ("D-188, Abul Fazal Enclave-I, Jamia Nagar, New Delhi-110025", "Apartment","Mariyam Bedroom"),
+        "1203240076": ("D 184 ABUL FAZAL ENCLAVE, JAMIA NAGAR, OKHLA, NEW DELHI 25", "Midrise Apartment (G+5)","Hisham Living Room"),
+        "1203240078": ("D 184 ABUL FAZAL ENCLAVE, JAMIA NAGAR, OKHLA, NEW DELHI 25", "Midrise Apartment (G+5)","Hisham Bedroom"),
+        "1203240075": ("A 48/B, Third Floor, Abul Fazal Enclave Part II, New Delhi", "Residential","Shahzeb Kitchen"),
+        "1201240072": ("448, Sector-9, Pocket-1 DDA Flats Dwarka, New Delhi-110075", "Residential","Lakshmi Living Room"),
+        "1201240077": ("448, Sector-9, Pocket-1 DDA Flats Dwarka, New Delhi-110075", "Residential","Lakshmi Kitchen"),
+        "1203240079": ("C-403, Prince Apartments, Plot 54, I.P. Extension, Patparganj, Delhi - 110092", "Residential, Multi-family","Piyush Living Room"),
+        "1201240079": ("B-3/527, Ekta Gardens Apts, Patparganj, Delhi - 110092", "Residential","Piyush Bedroom"),
+        "1201240085": ("B-3/527, Ekta Gardens Apts, Patparganj, Delhi - 110092", "Residential","Piyush Living Room"),
+        "1203240083": ("Flat No. 25, Tower E2, Sector E1, Vasant Kunj, New Delhi", "Residential","Sheetal Living Room"),
+        "1203240073": ("Flat no. 495, Block 14, Kaveri Apartments, D6, Vasant Kunj, Delhi - 110070", "Residential",'Nidhi Bedroom'),
+        "1203240074": ("569 sector A pocket C Vasant Kunj, Delhi - 110070", "Residential","Ashish Living Room"),
+        "1201240076": ("H No.-296 Near Durga Ashram, Chhatarpur, Delhi-110074", "Residential","Surender Living Room"),
+        "1212230160": ("H No.-296 Near Durga Ashram, Chhatarpur, Delhi-110074", "Residential","Surender Bedroom"),
+        "1202240009": ("D-13A 2nd Floor Left side, Paryavaran Complex, Delhi 1100030", "Office","Robin Bedroom"),
+        "1202240008": ("D-13A 2nd Floor Left side, Paryavaran Complex, Delhi 1100030", "Office","Robin Living Room"),
+        "1201240073": ("569 sector A pocket C Vasant Kunj, Delhi - 110070", "Residential","Tanmay Tathagat"),
+        "1203240080": ("F-5, 318-N, Chirag Delhi, Delhi-110017", "Residential","Abhishek Bedroom"),
+        "1201240074": ("F-5, 318-N, Chirag Delhi, Delhi-110017", "Residential","Abhishek Living Room"),
+        "1203240077": ("B-2/51-A, Keshav Puram", "Apartment","Gurneet Mannat Room"),
+        "1203240082": ("B-2/51-A, Keshav Puram", "Apartment","Gurneet Prabhansh Room"),
+        "1202240029": ("St. Mary's School, Dwarka Sec-19", "Office","St. Mary's School"),
+        "1202240028": ("St. Mary's School, Dwarka Sec-19", "Office","St. Mary's School"),
+        "1202240010": ("St. Mary's School, Dwarka Sec-19", "Office","St. Mary's School"),
+        "1202240012": ("St. Mary's School, Dwarka Sec-19", "School","St. Mary's School"),
     }
 
     residential_ids = [
@@ -1905,6 +1905,7 @@ if st.session_state.script_choice == "monthly_trends":
         # Display address and typology
     st.write(f"Address: {device_info[0]}")
     st.write(f"Typology: {device_info[1]}")
+    st.write(f"Device Location: {device_info[2]}")
 
     st.markdown('<div class="black-line"></div>', unsafe_allow_html=True)
 
@@ -2079,8 +2080,8 @@ elif st.session_state.script_choice == 'device_data_comparison':
 
     # Define device data dictionary with device IDs and their information
     device_data = {
-        '1203240077': ('Gurneet Mannat Room', 'Residential'),
-        '1203240076': ('Gurneet Prabhash Room', 'Residential'),
+        '1203240077': ('Gurneet  Bedroom', 'Residential'),
+        '1203240076': ('Hisham Living Room', 'Residential'),
         '1201240079': ('Piyush Bedroom', 'Residential'),
         '1201240085': ('Piyush Living Room', 'Residential'),
         '1203240083': ('Sheetal Living Room', 'Residential'),
@@ -2099,7 +2100,18 @@ elif st.session_state.script_choice == 'device_data_comparison':
         '1202240025': ('EDS D Block 1', 'Office'),
         '1202240026': ('EDS D Block 2', 'Office'),
         '1203240073': ('Nidhi Bedroom', 'Residential'),
-        '1203240072': ('Manpreet Drawing', 'Residential')
+        '1203240081': ('EDS E Block', 'Office'),
+        '1203240078': ('Hisham Bedroom', 'Residential'),
+        '1203240075': ('Shahzeb Kitchen', 'Residential'),
+        '1203240079': ('Piyush Living Room Prince Apart.', 'Residential'),
+        '1203240074': ('Ashish Living Room', 'Residential'),
+        '1201240073': ('Tanmay Tathagat', 'Residential'),
+        '1203240082': ('Gurneet Prabhansh Room', 'Residential'),
+        '1202240029': ("St. Mary's School", 'Office'),
+        '1202240028': ('St. Marys School', 'Office'),
+        '1202240010': ('St. Marys School', 'Office'),
+        '1202240012': ('St. Marys School', 'Office')
+
     }
     
     # Create reverse mapping from location to device ID
@@ -2166,7 +2178,7 @@ elif st.session_state.script_choice == 'device_data_comparison':
         if not selected_locations:
             st.error("Please select at least one location")
         else:
-            with st.spinner("Generating comparison...please wait"):
+            with st.spinner("Generating Charts...please wait"):
                 try:
                     # Connect to the MySQL database
                     conn = mysql.connector.connect(
