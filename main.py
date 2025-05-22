@@ -1,4 +1,5 @@
 import pandas as pd
+from referencing.jsonschema import UnknownDialect
 import streamlit as st
 import plotly.graph_objects as go
 import mysql.connector
@@ -2074,8 +2075,8 @@ if st.session_state.script_choice == "monthly_trends":
 
 elif st.session_state.script_choice == 'device_data_comparison':
     st.header('Device Data Comparison')
-    st.write("This section will allow you to compare data between different devices.")
-    
+    st.markdown("<br>", unsafe_allow_html=True)
+
     # Define device data dictionary with device IDs and their information
     device_data = {
         '1203240077': ('Gurneet Mannat Room', 'Residential'),
@@ -2105,28 +2106,31 @@ elif st.session_state.script_choice == 'device_data_comparison':
     location_to_device = {info[0]: device_id for device_id, info in device_data.items()}
     
     # Get list of locations
-    locations = sorted(location_to_device.keys())
+    locations = ['None'] + sorted(location_to_device.keys())
     
     # Create columns for device selection
     col1, col2, col3 = st.columns(3)
     
     with col1:
         location_1 = st.selectbox("Select First Location:", options=locations, index=0, key='location_1')
-        device_id_1 = location_to_device[location_1]
-        st.write(f"Device ID: {device_id_1}")
-        st.write(f"Type: {device_data[device_id_1][1]}")
+        if location_1 != 'None':
+            device_id_1 = location_to_device[location_1]
+            st.write(f"Device ID: {device_id_1}")
+            st.write(f"Type: {device_data[device_id_1][1]}")
     
     with col2:
         location_2 = st.selectbox("Select Second Location:", options=locations, index=0, key='location_2')
-        device_id_2 = location_to_device[location_2]
-        st.write(f"Device ID: {device_id_2}")
-        st.write(f"Type: {device_data[device_id_2][1]}")
+        if location_2 != 'None':
+            device_id_2 = location_to_device[location_2]
+            st.write(f"Device ID: {device_id_2}")
+            st.write(f"Type: {device_data[device_id_2][1]}")
     
     with col3:
         location_3 = st.selectbox("Select Third Location:", options=locations, index=0, key='location_3')
-        device_id_3 = location_to_device[location_3]
-        st.write(f"Device ID: {device_id_3}")
-        st.write(f"Type: {device_data[device_id_3][1]}")
+        if location_3 != 'None':
+            device_id_3 = location_to_device[location_3]
+            st.write(f"Device ID: {device_id_3}")
+            st.write(f"Type: {device_data[device_id_3][1]}")
     
     # Add date range selection
     col1, col2, col3 = st.columns(3)
@@ -2156,70 +2160,94 @@ elif st.session_state.script_choice == 'device_data_comparison':
     database = "cabh_iaq_db"
     # Button to generate comparison
     if st.button("Generate Charts"):
-        with st.spinner("Generating comparison...please wait"):
-            try:
-                # Connect to the MySQL database
-                conn = mysql.connector.connect(
-                    host=host,
-                    user=user,
-                    password=password,
-                    database=database
-                )
-                cursor = conn.cursor()
-                
-                # Create a figure for the comparison
-                fig = go.Figure()
-                
-                # Fetch and plot data for each device
-                for device_id, color in [(device_id_1, 'blue'), (device_id_2, 'red'), (device_id_3, 'green')]:
-                    # Query to fetch data for the selected date range
-                    query = """
-                    SELECT datetime, {}
-                    FROM reading_db
-                    WHERE deviceID = %s 
-                    AND DATE(datetime) BETWEEN %s AND %s;
-                    """.format(pollutant_map[pollutant])
+        # Get selected locations (excluding 'None')
+        selected_locations = [loc for loc in [location_1, location_2, location_3] if loc != 'None']
+        
+        if not selected_locations:
+            st.error("Please select at least one location")
+        else:
+            with st.spinner("Generating comparison...please wait"):
+                try:
+                    # Connect to the MySQL database
+                    conn = mysql.connector.connect(
+                        host=host,
+                        user=user,
+                        password=password,
+                        database=database
+                    )
+                    cursor = conn.cursor()
                     
-                    cursor.execute(query, (device_id, start_date, end_date))
-                    rows = cursor.fetchall()
+                    # Create a figure for the comparison
+                    fig = go.Figure()
                     
-                    if rows:
-                        # Process data
-                        df = pd.DataFrame(rows, columns=["datetime", pollutant_map[pollutant]])
-                        df['datetime'] = pd.to_datetime(df['datetime'])
-                        df.set_index('datetime', inplace=True)
+                    # Create a list of device IDs and their colors for selected locations
+                    device_colors = []
+                    if location_1 != 'None':
+                        device_colors.append((location_to_device[location_1], 'blue', location_1))
+                    if location_2 != 'None':
+                        device_colors.append((location_to_device[location_2], 'red', location_2))
+                    if location_3 != 'None':
+                        device_colors.append((location_to_device[location_3], 'green', location_3))
+                    
+                    # Only process unique locations
+                    processed_locations = set()
+                    
+                    # Fetch and plot data for each unique device
+                    for device_id, color, location in device_colors:
+                        if location in processed_locations:
+                            continue
+                            
+                        processed_locations.add(location)
                         
-                        # Remove zeros and resample to hourly averages
-                        df = df[df[pollutant_map[pollutant]] != 0]
-                        df = df.resample('H').mean()
+                        # Query to fetch data for the selected date range
+                        query = """
+                        SELECT datetime, {}
+                        FROM reading_db
+                        WHERE deviceID = %s 
+                        AND DATE(datetime) BETWEEN %s AND %s;
+                        """.format(pollutant_map[pollutant])
                         
-                        # Add trace to the figure
-                        fig.add_trace(go.Scatter(
-                            x=df.index,
-                            y=df[pollutant_map[pollutant]],
-                            name=f"{device_data[device_id][0]}",
-                            line=dict(color=color)
-                        ))
-                
-                # Update layout
-                fig.update_layout(
-                    title=f"{pollutant} Comparison",
-                    xaxis_title="Time",
-                    yaxis_title=pollutant,
-                    height=600
-                )
-                
-                # Display the plot
-                st.plotly_chart(fig, use_container_width=True)
-                
-            except mysql.connector.Error as e:
-                st.error(f"Database error: {e}")
-            except Exception as e:
-                st.error(f"An unexpected error occurred: {e}")
-            finally:
-                if 'conn' in locals() and conn.is_connected():
-                    cursor.close()
-                    conn.close()
+                        cursor.execute(query, (device_id, start_date, end_date))
+                        rows = cursor.fetchall()
+                        
+                        if rows:
+                            # Process data
+                            df = pd.DataFrame(rows, columns=["datetime", pollutant_map[pollutant]])
+                            df['datetime'] = pd.to_datetime(df['datetime'])
+                            df.set_index('datetime', inplace=True)
+                            
+                            # Remove zeros and resample to hourly averages
+                            df = df[df[pollutant_map[pollutant]] != 0]
+                            df = df.resample('H').mean()
+                            
+                            # Add trace to the figure
+                            fig.add_trace(go.Scatter(
+                                x=df.index,
+                                y=df[pollutant_map[pollutant]],
+                                name=f"{device_data[device_id][0]}",
+                                line=dict(color=color)
+                            ))
+                    
+                    # Update layout
+                    fig.update_layout(
+                        title=f"{pollutant} Comparison",
+                        xaxis_title="Date",
+                        yaxis_title=pollutant,
+                        height=600
+                    )
+                    
+                    # Display the plot
+                    st.plotly_chart(fig, use_container_width=True)
+                    
+                except mysql.connector.Error as e:
+                    st.error(f"Database error: {e}")
+                except Exception as e:
+                    st.error(f"An unexpected error occurred: {e}")
+                finally:
+                    # Ensure the database connection is closed
+                    if 'conn' in locals() and conn.is_connected():
+                        cursor.close()
+                        conn.close()
     
     st.markdown('<hr style="border:1px solid black">', unsafe_allow_html=True)
 
